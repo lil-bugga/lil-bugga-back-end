@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :entries
   resources :tickets
   resources :projects
   resources :users
