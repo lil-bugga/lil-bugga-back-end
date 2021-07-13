@@ -5,11 +5,11 @@ Rails.application.routes.draw do
       # resources :tickets
       # resources :projects
       # resources :users
-    end
-    namespace :v1 do
       get 'users/signup', to: 'users#signup'
       post 'users/signin', to: 'users#signin'
-      # concerns :base_api
+    end
+    namespace :v1 do
+      concerns :base_api
     end
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
