@@ -1,4 +1,4 @@
-class EntriesController < ApplicationController
+class Api::V1::EntriesController < ApplicationController
   before_action :set_entry, only: %i[show update destroy]
 
   # GET /entries
