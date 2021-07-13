@@ -1,10 +1,10 @@
 class EntriesController < ApplicationController
-  before_action :set_entry, only: [:show, :update, :destroy]
+  before_action :set_entry, only: %i[show update destroy]
 
   # GET /entries
+  # This is a scaffold method, will need refactoring to get entries relative to ticket
   def index
     @entries = Entry.all
-
     render json: @entries
   end
 
@@ -18,7 +18,7 @@ class EntriesController < ApplicationController
     @entry = Entry.new(entry_params)
 
     if @entry.save
-      render json: @entry, status: :created, location: @entry
+      render json: @entry, status: :created
     else
       render json: @entry.errors, status: :unprocessable_entity
     end
@@ -39,13 +39,12 @@ class EntriesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_entry
-      @entry = Entry.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def entry_params
-      params.require(:entry).permit(:ticket_id, :author_id, :subject_string, :body)
-    end
+  def set_entry
+    @entry = Entry.find(params[:id])
+  end
+
+  def entry_params
+    params.require(:entry).permit(:ticket_id, :author_id, :subject_string, :body)
+  end
 end

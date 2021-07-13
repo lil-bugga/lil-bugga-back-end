@@ -1,10 +1,10 @@
 class TicketsController < ApplicationController
-  before_action :set_ticket, only: [:show, :update, :destroy]
+  before_action :set_ticket, only: %i[show update destroy]
 
   # GET /tickets
+  # This is a scaffold method, will need refactoring to make returned tickets relative to request
   def index
     @tickets = Ticket.all
-
     render json: @tickets
   end
 
@@ -18,7 +18,7 @@ class TicketsController < ApplicationController
     @ticket = Ticket.new(ticket_params)
 
     if @ticket.save
-      render json: @ticket, status: :created, location: @ticket
+      render json: @ticket, status: :created
     else
       render json: @ticket.errors, status: :unprocessable_entity
     end
@@ -39,13 +39,12 @@ class TicketsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ticket
-      @ticket = Ticket.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def ticket_params
-      params.require(:ticket).permit(:project_id, :user_id, :status)
-    end
+  def set_ticket
+    @ticket = Ticket.find(params[:id])
+  end
+
+  def ticket_params
+    params.require(:ticket).permit(:project_id, :user_id, :status)
+  end
 end
