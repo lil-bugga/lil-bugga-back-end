@@ -4,8 +4,7 @@ Rails.application.routes.draw do
       # resources :entries
       # resources :tickets
       # resources :projects
-      # resources :users
-      get 'users/signup', to: 'users#signup'
+      post 'users/signup', to: 'users#signup'
       post 'users/signin', to: 'users#signin'
     end
     namespace :v1 do

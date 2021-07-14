@@ -1,64 +1,28 @@
 class Api::V1::UsersController < ApplicationController
-  # before_action :set_user, only: %i[show update destroy]
-  before_action :set_user, only: %i[signin]
+  skip_before_action :verify_authenticity_token, raise: false
+  before_action :authenticate_user, except: [:signup,:signin]
 
   # GET /users
   # Will be used for user authorization, index method may not be required
   def signup
-    # @user = User.new(user_params)
-
-    # if @user.save
-    #   render json: @user, status: :created
-    # else
-    #   render json: @user.errors, status: :unprocessable_entity
-    # end
-
-    render json: {data: "Good job" }, status: 200
-  end
-
-  def signin
-    if @user
-      render json: @user, status: 200
+    @user = User.new(user_params)
+    @user.email.downcase!
+    if @user.save
+      render json: generate_token(@user), status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
   end
-  
 
-  # def index
-  #   @users = User.all
-  #   render json: @users
-  # end
-
-  # # GET /users/1
-  # def show
-  #   render json: @user
-  # end
-
-  # # POST /users
-  # def create
-  #   @user = User.new(user_params)
-
-  #   if @user.save
-  #     render json: @user, status: :created
-  #   else
-  #     render json: @user.errors, status: :unprocessable_entity
-  #   end
-  # end
-
-  # # PATCH/PUT /users/1
-  # def update
-  #   if @user.update(user_params)
-  #     render json: @user
-  #   else
-  #     render json: @user.errors, status: :unprocessable_entity
-  #   end
-  # end
-
-  # # DELETE /users/1
-  # def destroy
-  #   @user.destroy
-  # end
+  def signin
+    @user = User.find_by(email: params[:user][:email].downcase)
+    if @user && @user.authenticate(params[:user][:password])
+      render json: generate_token(@user), status: 200
+    else
+      render status: :unauthorized,
+             json: @user.nil? ? { error: 'user not found' } : { error: 'invalid password' }
+    end
+  end
 
   private
 
@@ -67,6 +31,11 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_digest)
+    params.require(:user).permit(:email, :password, :password_confirmation)
+  end
+
+  def generate_token(user)
+    auth_token = Knock::AuthToken.new payload: { sub: user.id }
+    { username: user.email, jwt: auth_token.token }
   end
 end
