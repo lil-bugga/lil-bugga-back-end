@@ -1,0 +1,80 @@
+### Signup with valid credentials
+POST http://localhost:3000/api/v1/users/signup
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "test_user@addresses.com",
+    "password": "password",
+    "password_confirmation": "password"
+  }
+}
+
+### Signup with email already in db
+POST http://localhost:3000/api/v1/users/signup
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "test_user@addresses.com",
+    "password": "password",
+    "password_confirmation": "password"
+  }
+}
+
+### Signup with password missmatch
+POST http://localhost:3000/api/v1/users/signup
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "test_user1@addresses.com",
+    "password": "password",
+    "password_confirmation": "123345"
+  }
+}
+
+### Signup with missing password
+POST http://localhost:3000/api/v1/users/signup
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "test_user1@addresses.com",
+    "password": "",
+    "password_confirmation": ""
+  }
+}
+
+### Signin with valid credentials
+POST http://localhost:3000/api/v1/users/signin
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "test_user@addresses.com",
+    "password": "password"
+  }
+}
+
+### Signin with invalid password
+POST http://localhost:3000/api/v1/users/signin
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "test_user@addresses.com",
+    "password": "123456"
+  }
+}
+
+### Signin with invalid email
+POST http://localhost:3000/api/v1/users/signin
+Content-Type: application/json
+
+{
+  "user": {
+    "email": "not_in_system@addresses.com",
+    "password": "password"
+  }
+}
