@@ -3,7 +3,15 @@ Rails.application.routes.draw do
     concern :base_api do
       # resources :entries
       # resources :tickets
-      # resources :projects
+
+      #Projects
+      get 'projects',        to: 'projects#index'
+      get 'projects/:id',    to: 'projects#show'
+      post 'projects',       to: 'projects#create'
+      patch 'projects/:id',  to: 'projects#update'
+      delete 'projects/:id', to: 'projects#destroy'
+
+      #Auth
       post 'users/signup', to: 'users#signup'
       post 'users/signin', to: 'users#signin'
     end
