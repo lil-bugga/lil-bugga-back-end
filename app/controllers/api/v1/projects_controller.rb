@@ -23,6 +23,7 @@ class Api::V1::ProjectsController < ApplicationController
   # POST /projects
   def create
     @project = Project.new(project_params)
+    @project.user_id = current_user.id
     # Do not save project if no project details have been passed
     if @project.project_detail
       if @project.save
@@ -58,7 +59,7 @@ class Api::V1::ProjectsController < ApplicationController
 
   def project_params
     params.require(:project).permit(
-      :user_id, :status,
+      :status,
       project_detail_attributes: [:project_name, :description]
     )
   end
