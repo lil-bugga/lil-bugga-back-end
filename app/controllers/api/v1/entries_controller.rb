@@ -1,21 +1,25 @@
 class Api::V1::EntriesController < ApplicationController
   before_action :set_entry, only: %i[show update destroy]
+  before_action :set_ticket, only: %i[index create]
+  before_action :authenticate_user
 
-  # GET /entries
-  # This is a scaffold method, will need refactoring to get entries relative to ticket
+  # GET /projects/:project_id/tickets/:ticket_id/entries
+  # Fetch all entries associated with ticket id
   def index
-    @entries = Entry.all
+    @entries = Entry.all_for_ticket(@ticket)
     render json: @entries
   end
 
-  # GET /entries/1
+  # GET /projects/:project_id/tickets/:ticket_id/entries/:id
   def show
     render json: @entry
   end
 
-  # POST /entries
+  # POST /projects/:project_id/tickets/:ticket_id/entries
   def create
     @entry = Entry.new(entry_params)
+    @entry.user_id = current_user.id
+    @entry.ticket_id = @ticket # params[:ticket_id]
 
     if @entry.save
       render json: @entry, status: :created
@@ -24,27 +28,39 @@ class Api::V1::EntriesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /entries/1
+  # PATCH/PUT /projects/:project_id/tickets/:ticket_id/entries/:id
   def update
-    if @entry.update(entry_params)
-      render json: @entry
+    if current_user.id == @entry.user_id
+      if @entry.update(entry_params)
+        render json: @entry
+      else
+        render json: @entry.errors, status: :unprocessable_entity
+      end
     else
-      render json: @entry.errors, status: :unprocessable_entity
+      render json: {error: "Only the entries author can edit this entry"}
     end
   end
 
-  # DELETE /entries/1
+  # DELETE /projects/:project_id/tickets/:ticket_id/entries/:id
   def destroy
-    @entry.destroy
+    if current_user.id == @entry.user_id
+      @entry.destroy
+    else
+      render json: {error: "Only the entries author can delete this entry"}
+    end
   end
 
   private
+
+  def set_ticket
+    @ticket = params[:ticket_id]
+  end
 
   def set_entry
     @entry = Entry.find(params[:id])
   end
 
   def entry_params
-    params.require(:entry).permit(:ticket_id, :author_id, :subject_string, :body)
+    params.require(:entry).permit(:subject, :body)
   end
 end

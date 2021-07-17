@@ -20,6 +20,13 @@ Rails.application.routes.draw do
       patch 'projects/:project_id/tickets/:id', to: 'tickets#update'
       delete 'projects/:project_id/tickets/:id', to: 'tickets#destroy'
 
+      # Entries
+      get 'projects/:project_id/tickets/:ticket_id/entries',       to: 'entries#index'
+      get 'projects/:project_id/tickets/:ticket_id/entries/:id',   to: 'entries#show'
+      post 'projects/:project_id/tickets/:ticket_id/entries',      to: 'entries#create'
+      patch 'projects/:project_id/tickets/:ticket_id/entries/:id', to: 'entries#update'
+      delete 'projects/:project_id/tickets/:ticket_id/entries/:id', to: 'entries#destroy'
+
       #Auth
       post 'users/signup', to: 'users#signup'
       post 'users/signin', to: 'users#signin'
