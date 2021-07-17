@@ -12,7 +12,13 @@ Rails.application.routes.draw do
       delete 'projects/:id', to: 'projects#destroy'
 
       # Tickets
-      post 'projects/:project_id/tickets', to: 'tickets#create'
+      get 'tickets/all',                        to: 'tickets#index_all'
+      get 'tickets/user',                       to: 'tickets#index_user'
+      get 'projects/:project_id/tickets',       to: 'tickets#index'
+      get 'projects/:project_id/tickets/:id',   to: 'tickets#show'
+      post 'projects/:project_id/tickets',      to: 'tickets#create'
+      patch 'projects/:project_id/tickets/:id', to: 'tickets#update'
+      delete 'projects/:project_id/tickets/:id', to: 'tickets#destroy'
 
       #Auth
       post 'users/signup', to: 'users#signup'
