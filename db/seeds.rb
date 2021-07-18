@@ -14,19 +14,19 @@ if seed
   puts '----------------'
 
   pass = 'password'
-  users = ['sample@sample.com', 'john@tester.com', 'sue@tester.com']
+  users = ['sample', 'john', 'sue']
   count_users = 0
   count_projects = 0
   count_tickets = 0
   count_entries = 0
 
-  users.each do |email|
-    puts "\nCreating user: #{email}"
-    user = User.create!(email: email, password_digest: User.digest(pass))
+  users.each do |user|
+    puts "\nCreating user: #{user}"
+    user = User.create!(email: "#{user}@sample.com", username: user, password_digest: User.digest(pass))
     count_users += 1
 
     3.times do |i|
-      puts "Creating project: #{i + 1} for #{email}"
+      puts "Creating project: #{i + 1} for #{user}"
       project = Project.create!(user_id: user.id)
       project_details = ProjectDetail.create!(
         project_id: project.id,

@@ -31,11 +31,11 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
+    params.require(:user).permit(:email, :username, :password, :password_confirmation)
   end
 
   def generate_token(user)
     auth_token = Knock::AuthToken.new payload: { sub: user.id }
-    { username: user.email, jwt: auth_token.token }
+    { email: user.email, username: user.username, jwt: auth_token.token }
   end
 end

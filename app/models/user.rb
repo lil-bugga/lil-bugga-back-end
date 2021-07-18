@@ -10,6 +10,7 @@ class User < ApplicationRecord
   enum role: [:user, :system_administrator]
   attribute :role, default: 0
 
+  validates :username, presence: true
   validates :email, presence: true, uniqueness: true
 
   # Self method for generating hashed passwords in the seed file
