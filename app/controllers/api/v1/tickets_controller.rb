@@ -27,7 +27,7 @@ class Api::V1::TicketsController < ApplicationController
 
   # GET /projects/:project_id/tickets/:id
   def show
-    render json: @ticket
+    render json: @ticket.to_json(include: :entries)
   end
 
   # POST /projects/:project_id/tickets
