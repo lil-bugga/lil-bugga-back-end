@@ -13,6 +13,11 @@ if seed
   puts 'Starting DB Seed'
   puts '----------------'
 
+  puts 'Creating SuperUser'
+  superuser = User.create(email: "super@user.com", username: "Super User", password_digest: User.digest("SuperSecretUserPassword"), role: 1)
+  puts 'Created superuser'
+  
+  puts 'Creating other seed data'
   pass = 'password'
   users = ['sample', 'john', 'sue']
   count_users = 0
@@ -54,6 +59,7 @@ if seed
 
   puts '-----------------'
   puts 'Done Seeding'
+  puts "SuperUser Account created with email: #{superuser.email}"
   puts 'There are a total of:'
   puts "Users: #{count_users}"
   puts "Projects: #{count_projects}"
