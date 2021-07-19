@@ -24,18 +24,25 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
-  private
-
-  def set_user
-    @user = User.find(params[:id])
+  # post '/users/update
+  # Requires JWT in header to authorise and direct update to user
+  def update
+    @user = current_user
+    if @user.update(user_params)
+      render json: generate_token(@user), status: :created
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
   end
 
+  private
+
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
+    params.require(:user).permit(:email, :username, :password, :password_confirmation)
   end
 
   def generate_token(user)
     auth_token = Knock::AuthToken.new payload: { sub: user.id }
-    { username: user.email, jwt: auth_token.token }
+    { email: user.email, username: user.username, jwt: auth_token.token }
   end
 end
