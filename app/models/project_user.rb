@@ -18,4 +18,12 @@ class ProjectUser < ApplicationRecord
   def self.find_user_in_project(user_id, project_id)
     where(user_id: user_id, project_id: project_id)
   end
+
+  # Verify user has required permissions on project.
+  # Takes a user obj or id, the project_obj or id, and the enum role (string or int)
+  def self.verify_role(user_id, project, role)
+    user_arr = find_user_in_project(user_id, project)
+    user_arr.each { |user| return true if user.role <= role }
+    false
+  end
 end
