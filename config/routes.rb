@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       #Auth
       post 'users/signup', to: 'users#signup'
       post 'users/signin', to: 'users#signin'
+      post 'users/update', to: 'users#update'
     end
     namespace :v1 do
       concerns :base_api
