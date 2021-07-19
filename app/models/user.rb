@@ -11,7 +11,8 @@ class User < ApplicationRecord
   attribute :role, default: 0
 
   validates :username, presence: true
-  validates :email, presence: true, uniqueness: true
+  # Validate email based on preconfigured regex used in MailTo module 
+  validates :email, presence: true, uniqueness: true, format: URI::MailTo::EMAIL_REGEXP
 
   # Self method for generating hashed passwords in the seed file
   def self.digest(string)
