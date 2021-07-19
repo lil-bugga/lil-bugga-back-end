@@ -1,4 +1,6 @@
 class Project < ApplicationRecord
+  after_create :set_owner
+
   belongs_to :user
   has_many :project_users, dependent: :destroy
   has_many :tickets
@@ -17,4 +19,8 @@ class Project < ApplicationRecord
   # Set min and max values for status integer. Increment `less_than_or_equal_to:` if more status' are added 
   validates :status, numericality:
     {greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
+
+  def set_owner
+    self.project_users.create(user_id: self.user_id, role: "owner")
+  end
 end
