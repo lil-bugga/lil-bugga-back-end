@@ -7,8 +7,8 @@ class User < ApplicationRecord
   has_many :project_users
   has_many :projects, through: :project_users
 
-  enum role: [:user, :system_administrator]
   attribute :role, default: 0
+  enum role: [:user, :system_administrator]
 
   validates :username, presence: true
   # Validate email based on preconfigured regex used in MailTo module 
