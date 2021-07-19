@@ -1,15 +1,17 @@
 Rails.application.routes.draw do
   namespace :api do
     concern :base_api do
-      # resources :entries
-      # resources :tickets
-      
+
       #Projects
-      get 'projects',        to: 'projects#index'
-      get 'projects/:id',    to: 'projects#show'
-      post 'projects',       to: 'projects#create'
-      patch 'projects/:id',  to: 'projects#update'
-      delete 'projects/:id', to: 'projects#destroy'
+      get 'projects',              to: 'projects#index'
+      get 'projects/:id',          to: 'projects#show'
+      get 'projects/:id/users',    to: 'projects#get_users'
+      post 'projects',             to: 'projects#create'
+      post 'projects/:id/users',   to: 'projects#add_users'
+      patch 'projects/:id',        to: 'projects#update'
+      patch 'projects/:id/users',  to: 'projects#update_users'
+      delete 'projects/:id',       to: 'projects#destroy'
+      delete 'projects/:id/users', to: 'projects#remove_users'
 
       # Tickets
       get 'tickets/all',                        to: 'tickets#index_all'
