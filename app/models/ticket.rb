@@ -6,11 +6,10 @@ class Ticket < ApplicationRecord
   # Allows integer to represent ticket status with :open?, :todo?, :in_progress?, :complete, and :closed? method checks
   # Add more to array as more status' are required. NB: order matters, append only unless db will be dropped
   attribute :status, default: 0 # Default ticket to open unless specified
-  enum status: ["open", "todo", "in_progress", "complete", "closed"]
+  enum status: %i[open todo in_progress complete closed]
 
-  # Set min and max values for status integer. Increment `less_than_or_equal_to:` if more status' are added 
-  validates :status, numericality:
-    {greater_than_or_equal_to: 0, less_than_or_equal_to: 4}
+  # Validates enum is within enum array
+  validates :status, inclusion: { in: :status }
 
   # Method to select all tickets for project ID
   def self.all_for_project(project_id)
