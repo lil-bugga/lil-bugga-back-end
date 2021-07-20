@@ -16,9 +16,8 @@ class Project < ApplicationRecord
   attribute :status, default: 0 # Default ticket to open unless specified
   enum status: [:open, :closed]
 
-  # Set min and max values for status integer. Increment `less_than_or_equal_to:` if more status' are added 
-  validates :status, numericality:
-    {greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
+  # Validates enum is within enum array
+  validates :status, inclusion: { in: :status }
 
   def set_owner
     self.project_users.create(user_id: self.user_id, role: "owner")

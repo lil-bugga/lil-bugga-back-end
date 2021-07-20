@@ -12,8 +12,8 @@ class ProjectUser < ApplicationRecord
   attribute :role, default: 0
   enum role: %i[client developer admin owner]
 
-  validates :role, numericality:
-  {greater_than_or_equal_to: 0, less_than_or_equal_to: 3}
+  # Validates enum is within enum array
+  validates :role, inclusion: { in: :role }
 
   def self.find_user_in_project(user, project)
     where(user_id: user, project_id: project)
