@@ -3,7 +3,7 @@ class Project < ApplicationRecord
 
   belongs_to :user
   has_many :project_users, dependent: :destroy
-  has_many :tickets
+  has_many :tickets, dependent: :destroy
   # Project details will be deleted when projects are deleted
   has_one :project_detail, dependent: :destroy
   # Accept project details through the project controller, do not create if no params are passed
