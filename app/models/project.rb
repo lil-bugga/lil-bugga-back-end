@@ -23,4 +23,10 @@ class Project < ApplicationRecord
   def set_owner
     self.project_users.create(user_id: self.user_id, role: "owner")
   end
+
+  def self.all_for_user(user_id)
+    project_users = ProjectUser.where(user_id: user_id)
+    project_users.map{ |x| Project.find_by_id(x.project_id)}
+  end
+
 end

@@ -6,17 +6,21 @@ class Api::V1::ProjectsController < ApplicationController
   before_action :authenticate_user
 
   # GET /projects
-  # This is a scaffold method, will need refactoring to identify projects based on users
+  # Returns all projects for which the user is associated
   def index
-    @projects = Project.all
-
+    @projects = Project.all_for_user(current_user.id)
     render json: @projects.to_json(include: :project_detail)
   end
 
   # GET /projects/:id
+  # Only viewable by members of the project
   def show
     if @project
-      render json: @project.to_json(include: %i[project_detail project_users]), status: 200
+      if ProjectUser.verify_role(current_user.id, @project, "client")
+        render json: @project.to_json(include: %i[project_detail project_users]), status: 200
+      else
+        render json: {error: "You are not authorised"}, status: :unauthorized
+      end
     else
       render json: { error: "no project found with id of #{params[:id]}" }, status: 404
     end
@@ -39,20 +43,40 @@ class Api::V1::ProjectsController < ApplicationController
   end
 
   # PATCH/PUT /projects/:id
+  # Should be accessible to owner role only
   def update
-    if @project.update(project_params)
-      render json: @project.to_json(include: :project_detail), status: 200
+    if @project
+      if ProjectUser.verify_role(current_user.id, @project, "owner")
+        if @project.update(project_params)
+          render json: @project.to_json(include: :project_detail), status: 200
+        else
+          render json: @project.errors, status: :unprocessable_entity
+        end
+      else
+        render json: {error: "You are not authorised"}, status: :unauthorized
+      end
     else
-      render json: @project.errors, status: :unprocessable_entity
+      render json: { error: "no project found with id of #{params[:id]}" }, status: 404
     end
   end
 
   # GET /projects/:id/users
+  # Should be accessible to all users on the project
   def get_users
-    render json: @project.project_users
+    if @project
+      if ProjectUser.verify_role(current_user.id, @project, "client")
+        render json: @project.project_users
+      else
+        render json: {error: "You are not authorised"}, status: :unauthorized
+      end
+    else
+      render json: { error: "no project found with id of #{params[:id]}" }, status: 404
+    end
   end
 
   # POST /projects/:id/users
+  # Accessible only to the project owner
+  # Limited to owner listed in project, to prevent accidental demotion of self from owner.
   def add_users
     if @project.user_id == current_user.id
       success = []
@@ -73,6 +97,8 @@ class Api::V1::ProjectsController < ApplicationController
   end
 
   # DELETE /projects/:id/users
+  # Accessible only to the project owner
+  # Limited to owner listed in project, to prevent accidental demotion of self from owner.
   def remove_users
     if @project.user_id == current_user.id
       success = []
@@ -98,6 +124,9 @@ class Api::V1::ProjectsController < ApplicationController
     end
   end
 
+  # PATCH /projects/:id/users
+  # Accessible only to the project owner
+  # Limited to owner listed in project, to prevent accidental demotion of self from owner.
   def update_users
     if @project.user_id == current_user.id
       success = []
@@ -129,8 +158,14 @@ class Api::V1::ProjectsController < ApplicationController
   end
 
   # DELETE /projects/1
+  # Accessible only to the project owner
+  # Limited to owner listed in project, to maintain highest level of integrity possible.
   def destroy
-    @project.destroy
+    if @project.user_id == current_user.id
+      @project.destroy
+    else
+      render json: { error: 'Only the project author can delete the project' }
+    end
   end
 
   private
