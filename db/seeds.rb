@@ -30,7 +30,7 @@ if seed
     user = User.create!(email: "#{user}@sample.com", username: user, password_digest: User.digest(pass))
     count_users += 1
 
-    3.times do |i|
+    5.times do |i|
       puts "Creating project: #{i + 1} for #{user}"
       project = Project.create!(user_id: user.id)
       project_details = ProjectDetail.create!(
@@ -40,19 +40,21 @@ if seed
       )
       count_projects += 1
 
-      puts "Creating ticket for #{project_details.project_name}"
-      ticket = Ticket.create!(project_id: project.id, user_id: user.id)
-      count_tickets += 1
+      rand(3..15).times do 
+        puts "Creating ticket for #{project_details.project_name}"
+        ticket = Ticket.create!(project_id: project.id, user_id: user.id)
+        count_tickets += 1
 
-      rand(2..10).times do |i|
-        puts "Creating entry: #{i + 1} for #{ticket.id}"
-        entry = Entry.create!(
-          ticket_id: ticket.id,
-          user_id: user.id,
-          subject: Faker::Company.bs,
-          body: Faker::Lorem.paragraph(sentence_count: rand(5..30), supplemental: true)
-        )
-        count_entries += 1
+        rand(2..10).times do |i|
+          puts "Creating entry: #{i + 1} for #{ticket.id}"
+          entry = Entry.create!(
+            ticket_id: ticket.id,
+            user_id: user.id,
+            subject: Faker::Company.bs,
+            body: Faker::Lorem.paragraph(sentence_count: rand(5..30), supplemental: true)
+          )
+          count_entries += 1
+        end
       end
     end
   end
