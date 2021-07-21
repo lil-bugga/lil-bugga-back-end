@@ -30,7 +30,7 @@ class Api::V1::TicketsController < ApplicationController
   # GET /tickets/all
   # Fetch all tickets
   def index_all
-    @tickets = Ticket.all
+    @tickets = Ticket.all_tickets
     render json: @tickets
   end
 
