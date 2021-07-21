@@ -1,6 +1,6 @@
 class Api::V1::EntriesController < ApplicationController
   before_action :set_entry, only: %i[show update destroy]
-  before_action :set_ticket, only: %i[index create show]
+  before_action :set_ticket
   before_action :authenticate_user
 
   # GET /projects/:project_id/tickets/:ticket_id/entries
@@ -31,8 +31,7 @@ class Api::V1::EntriesController < ApplicationController
     if @ticket.user_id == current_user.id || ProjectUser.verify_role(current_user.id, @ticket.project_id, "developer")
       @entry = Entry.new(entry_params)
       @entry.user_id = current_user.id
-      @entry.ticket_id = @ticket # params[:ticket_id]
-
+      @entry.ticket_id = @ticket.id # params[:ticket_id]
       if @entry.save
         render json: @entry, status: :created
       else
