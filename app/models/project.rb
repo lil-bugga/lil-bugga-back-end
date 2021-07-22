@@ -19,6 +19,18 @@ class Project < ApplicationRecord
   # Validates enum is within enum array
   validates :status, inclusion: { in: :status }
 
+  def self.build_project_object(project, user_id)
+    response = project.as_json
+    response[:project_detail] = project.project_detail
+    response[:project_users] = project.project_users.map do |user|
+      data = user.as_json
+      data[:username] = User.find_by_id(user[:user_id]).username
+      data
+    end
+    response[:current_role] = ProjectUser.find_user_in_project(user_id, project)
+    response
+  end
+
   def set_owner
     self.project_users.create(user_id: self.user_id, role: "owner")
   end

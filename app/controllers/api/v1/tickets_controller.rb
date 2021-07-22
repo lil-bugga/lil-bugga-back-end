@@ -39,7 +39,7 @@ class Api::V1::TicketsController < ApplicationController
   def show
     if @ticket
       if ProjectUser.verify_role(current_user.id, @ticket.project_id, 'client')
-        render json: @ticket.to_json(include: :entries)
+        render json: Ticket.build_ticket_object(@ticket, current_user.id), status: 200
       else
         render json: { error: 'You are not authorised' }, status: :unauthorized
       end
