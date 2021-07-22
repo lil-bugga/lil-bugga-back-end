@@ -17,7 +17,7 @@ class Api::V1::ProjectsController < ApplicationController
   def show
     if @project
       if ProjectUser.verify_role(current_user.id, @project, "client")
-        render json: @project.to_json(include: { project_detail: [], project_users: {include: [user: {only: [:username]}]}}), status: 200
+        render json: Project.build_project_object(@project, current_user.id), status: 200
       else
         render json: {error: 'You are not authorised'}, status: :unauthorized
       end
