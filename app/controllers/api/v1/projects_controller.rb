@@ -9,17 +9,17 @@ class Api::V1::ProjectsController < ApplicationController
   # Returns all projects for which the user is associated
   def index
     @projects = Project.all_for_user(current_user.id)
-    render json: @projects.to_json(include: :project_detail)
+    render @projects.to_json(include: :project_detail), status: 200
   end
 
   # GET /projects/:id
   # Only viewable by members of the project
   def show
     if @project
-      if ProjectUser.verify_role(current_user.id, @project, "client")
+      if ProjectUser.verify_role(current_user.id, @project, 'client')
         render json: Project.build_project_object(@project, current_user.id), status: 200
       else
-        render json: {error: 'You are not authorised'}, status: :unauthorized
+        render json: { error: 'You must be a member of a project to see its content' }, status: :unauthorized
       end
     else
       render json: { error: "no project found with id of #{params[:id]}" }, status: 404
@@ -46,14 +46,14 @@ class Api::V1::ProjectsController < ApplicationController
   # Should be accessible to owner role only
   def update
     if @project
-      if ProjectUser.verify_role(current_user.id, @project, "owner")
+      if ProjectUser.verify_role(current_user.id, @project, 'owner')
         if @project.update(project_params)
-          render json: @project.to_json(include: :project_detail), status: 200
+          render @project.to_json(include: :project_detail), status: 200
         else
           render json: @project.errors, status: :unprocessable_entity
         end
       else
-        render json: {error: "You are not authorised"}, status: :unauthorized
+        render json: { error: 'Only the project owner can update its details' }, status: :unauthorized
       end
     else
       render json: { error: "no project found with id of #{params[:id]}" }, status: 404
@@ -64,10 +64,10 @@ class Api::V1::ProjectsController < ApplicationController
   # Should be accessible to all users on the project
   def get_users
     if @project
-      if ProjectUser.verify_role(current_user.id, @project, "client")
-        render json: @project.project_users
+      if ProjectUser.verify_role(current_user.id, @project, 'client')
+        render json: @project.project_users, status: 200
       else
-        render json: {error: "You are not authorised"}, status: :unauthorized
+        render json: { error: 'You must be a member of a project to see its content' }, status: :unauthorized
       end
     else
       render json: { error: "no project found with id of #{params[:id]}" }, status: 404
@@ -92,7 +92,7 @@ class Api::V1::ProjectsController < ApplicationController
         render json: { errors: errors }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Only the project owner can edit project users' }
+      render json: { error: 'Only the project owner can edit project users' }, status: :unauthorized
     end
   end
 
@@ -120,7 +120,7 @@ class Api::V1::ProjectsController < ApplicationController
         render json: { errors: errors }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Only the project owner can edit project users' }
+      render json: { error: 'Only the project owner can edit project users' }, status: :unauthorized
     end
   end
 
@@ -153,7 +153,7 @@ class Api::V1::ProjectsController < ApplicationController
         render json: { errors: errors }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Only the project owner can edit project users' }
+      render json: { error: 'Only the project owner can edit project users' }, status: :unauthorized
     end
   end
 
@@ -164,7 +164,7 @@ class Api::V1::ProjectsController < ApplicationController
     if @project.user_id == current_user.id
       @project.destroy
     else
-      render json: { error: 'Only the project author can delete the project' }
+      render json: { error: 'Only the project owner can delete the project' }, status: :unauthorized
     end
   end
 

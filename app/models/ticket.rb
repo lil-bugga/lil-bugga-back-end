@@ -13,8 +13,8 @@ class Ticket < ApplicationRecord
 
   def self.build_ticket_object_array(data)
     data.as_json.map do |item|
-      item[:project_detail] = ProjectDetail.find_by_id(item["project_id"])
-      item[:first_entry] = Entry.find_by_ticket_id(item["id"])
+      item[:project_detail] = ProjectDetail.find_by_id(item['project_id'])
+      item[:first_entry] = Entry.find_by_ticket_id(item['id'])
       item
     end
   end
@@ -23,7 +23,7 @@ class Ticket < ApplicationRecord
   def self.build_ticket_object(ticket, user_id)
     response = ticket.as_json
     response[:current_role] = ProjectUser.find_user_in_project(user_id, ticket.project_id)
-    response[:entries] = Entry.where(ticket_id: ticket["id"])
+    response[:entries] = Entry.where(ticket_id: ticket['id'])
     response
   end
 
@@ -43,5 +43,4 @@ class Ticket < ApplicationRecord
     data = Ticket.all
     build_ticket_object_array(data)
   end
-
 end
