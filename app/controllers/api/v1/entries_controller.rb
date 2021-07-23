@@ -9,9 +9,9 @@ class Api::V1::EntriesController < ApplicationController
   def index
     if ProjectUser.verify_role(current_user.id, @ticket.project_id, "client")
       @entries = Entry.all_for_ticket(@ticket)
-      render json: @entries
+      render json: @entries, status: 200
     else
-      render json: {error: "You are not authorised"}, status: :unauthorized
+      render json: {error: "You must be a member of a project to see its content"}, status: :unauthorized
     end
   end
 
@@ -19,9 +19,9 @@ class Api::V1::EntriesController < ApplicationController
   # Available for all members of project
   def show
     if ProjectUser.verify_role(current_user.id, @ticket.project_id, "client")
-      render json: @entry
+      render json: @entry, status: 200
     else
-      render json: {error: "You are not authorised"}, status: :unauthorized
+      render json: {error: "You must be a member of a project to see its content"}, status: :unauthorized
     end
   end
 
@@ -38,7 +38,7 @@ class Api::V1::EntriesController < ApplicationController
         render json: @entry.errors, status: :unprocessable_entity
       end
     else
-      render json: {error: "You are not authorised"}, status: :unauthorized
+      render json: {error: "You must be the entry author, or on the project team to edit this"}, status: :unauthorized
     end
   end
 
@@ -47,12 +47,12 @@ class Api::V1::EntriesController < ApplicationController
   def update
     if @ticket.user_id == current_user.id || ProjectUser.verify_role(current_user.id, @ticket.project_id, "admin")
       if @entry.update(entry_params)
-        render json: @entry
+        render json: @entry, status: 200
       else
         render json: @entry.errors, status: :unprocessable_entity
       end
     else
-      render json: {error: "You are not authorised"}, status: :unauthorized
+      render json: {error: "You must be the entry author, or on the admin team to edit this"}, status: :unauthorized
     end
   end
 
@@ -62,7 +62,7 @@ class Api::V1::EntriesController < ApplicationController
     if @ticket.user_id == current_user.id || ProjectUser.verify_role(current_user.id, @ticket.project_id, "admin")
       @entry.destroy
     else
-      render json: {error: "You are not authorised"}, status: :unauthorized
+      render json: {error: "You must be the entry author, or on the admin team to edit this"}, status: :unauthorized
     end
   end
 
