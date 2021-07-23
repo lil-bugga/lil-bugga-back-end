@@ -11,9 +11,9 @@ class Api::V1::TicketsController < ApplicationController
     if @project
       if ProjectUser.verify_role(current_user.id, @project, 'client')
         @tickets = Ticket.all_for_project(@project)
-        render json: @tickets
+        render json: @tickets, status: 200
       else
-        render json: { error: 'You are not authorised' }, status: :unauthorized
+        render json: { error: 'You must be a member of a project to see its content' }, status: :unauthorized
       end
     else
       render json: { error: "no project found with id of #{params[:project_id]}" }, status: 404
@@ -24,14 +24,14 @@ class Api::V1::TicketsController < ApplicationController
   # Fetch all tickets for current user
   def index_user
     @tickets = Ticket.all_for_user(current_user.id)
-    render json: @tickets
+    render json: @tickets, status: 200
   end
 
   # GET /tickets/all
   # Fetch all tickets
   def index_all
     @tickets = Ticket.all_tickets
-    render json: @tickets
+    render json: @tickets, status: 200
   end
 
   # GET /projects/:project_id/tickets/:id
@@ -39,9 +39,9 @@ class Api::V1::TicketsController < ApplicationController
   def show
     if @ticket
       if ProjectUser.verify_role(current_user.id, @ticket.project_id, 'client')
-        render json: @ticket.to_json(include: :entries)
+        render json: Ticket.build_ticket_object(@ticket, current_user.id), status: 200
       else
-        render json: { error: 'You are not authorised' }, status: :unauthorized
+        render json: { error: 'You must be a member of a project to see its content' }, status: :unauthorized
       end
     else
       render json: { error: "no ticket found with id of #{params[:project_id]}" }, status: 404
@@ -63,7 +63,7 @@ class Api::V1::TicketsController < ApplicationController
         render json: @ticket.errors, status: :unprocessable_entity
       end
     else
-      render json: { error: 'You are not authorised' }, status: :unauthorized
+      render json: { error: 'YYou must be a member of a project to see its content' }, status: :unauthorized
     end
   end
 
@@ -75,17 +75,17 @@ class Api::V1::TicketsController < ApplicationController
       if params[:ticket][:status] == 'closed'
         # Unless doesn't work, but if! does for some reason?
         if !ProjectUser.verify_role(current_user.id, @project, 'owner')
-          render json: { error: 'You are not authorised' }, status: :unauthorized
+          render json: { error: 'You must be the ticket author, or project owner to edit this' }, status: :unauthorized
           return
         end
       end
       if @ticket.update(ticket_params)
-        render json: @ticket
+        render json: @ticket, status: 200
       else
         render json: @ticket.errors, status: :unprocessable_entity
       end
     else
-      render json: { error: 'You are not authorised' }, status: :unauthorized
+      render json: { error: 'You must be the entry author, or on the admin team to edit this' }, status: :unauthorized
     end
   end
 
