@@ -14,7 +14,7 @@ class Project < ApplicationRecord
   # Allows integer to represent ticket status with :open? and :closed? method checks
   # Add more to array as more status' are required. NB: order matters, append only unless db will be dropped
   attribute :status, default: 0 # Default ticket to open unless specified
-  enum status: [:open, :closed]
+  enum status: %i[open closed]
 
   # Validates enum is within enum array
   validates :status, inclusion: { in: :status }
@@ -32,12 +32,11 @@ class Project < ApplicationRecord
   end
 
   def set_owner
-    self.project_users.create(user_id: self.user_id, role: "owner")
+    project_users.create(user_id: user_id, role: 'owner')
   end
 
   def self.all_for_user(user_id)
     project_users = ProjectUser.where(user_id: user_id)
-    project_users.map{ |x| Project.find_by_id(x.project_id)}
+    project_users.map { |x| Project.find_by_id(x.project_id) }
   end
-
 end
