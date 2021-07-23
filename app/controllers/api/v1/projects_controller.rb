@@ -9,7 +9,7 @@ class Api::V1::ProjectsController < ApplicationController
   # Returns all projects for which the user is associated
   def index
     @projects = Project.all_for_user(current_user.id)
-    render json: @projects.to_json(include: :project_detail), status: 200
+    render @projects.to_json(include: :project_detail), status: 200
   end
 
   # GET /projects/:id
@@ -48,7 +48,7 @@ class Api::V1::ProjectsController < ApplicationController
     if @project
       if ProjectUser.verify_role(current_user.id, @project, 'owner')
         if @project.update(project_params)
-          render json: @project.to_json(include: :project_detail), status: 200
+          render @project.to_json(include: :project_detail), status: 200
         else
           render json: @project.errors, status: :unprocessable_entity
         end
