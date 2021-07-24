@@ -5,6 +5,26 @@ RSpec.describe User, type: :model do
     user = build(:user)
     expect(user).to be_valid
   end
+
+  context 'Associations' do
+    it 'should have many projects' do
+      assoc = User.reflect_on_association(:projects)
+      expect(assoc.macro).to eq(:has_many)
+    end
+    it 'should have many project users' do
+      assoc = User.reflect_on_association(:project_users)
+      expect(assoc.macro).to eq(:has_many)
+    end
+    it 'should have many tickets' do
+      assoc = User.reflect_on_association(:tickets)
+      expect(assoc.macro).to eq(:has_many)
+    end
+    it 'should have many entries' do
+      assoc = User.reflect_on_association(:entries)
+      expect(assoc.macro).to eq(:has_many)
+    end
+  end
+
   context 'Validations' do
     before(:each) do
       @user = build(:user)
