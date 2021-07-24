@@ -32,6 +32,8 @@ group :development, :test do
   gem "rspec-rails", "~> 5.0"
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
+  gem 'simplecov', require: false, group: :test
+
 end
 
 group :development do
@@ -44,3 +46,5 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "faker", "~> 2.18"
+
+gem "diff-lcs", "~> 1.4"
