@@ -46,5 +46,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "faker", "~> 2.18"
-
-gem "diff-lcs", "~> 1.4"
+gem "json", "~> 2.5"
