@@ -3,8 +3,11 @@
 ## Links
 
 Hosted: https://lil-bugga.herokuapp.com/
+
 Back-End Trello: https://trello.com/b/z0PAejSN/lil-bugga-back-end
+
 Project: https://github.com/lil-bugga/project-documentation
+
 Front-End: https://github.com/lil-bugga/lil-bugga-front-end
 
 NB: Back-end heroku deployment is api only.
