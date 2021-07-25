@@ -1,7 +1,7 @@
 class Ticket < ApplicationRecord
   belongs_to :project
   belongs_to :user
-  has_many :entries, dependent: :destroy
+  has_many :entries, -> {order "id asc"}, dependent: :destroy
 
   # Allows integer to represent ticket status with :open?, :todo?, :in_progress?, :complete, and :closed? method checks
   # Add more to array as more status' are required. NB: order matters, append only unless db will be dropped
