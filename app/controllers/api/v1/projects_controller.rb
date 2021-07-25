@@ -115,7 +115,7 @@ class Api::V1::ProjectsController < ApplicationController
       if errors.empty?
         ProjectUser.destroy(success)
         success.each.destroy
-        render json: @project.project_users, status: :created
+        render json: @project.project_users, status: 204
       else
         render json: { errors: errors }, status: :unprocessable_entity
       end
