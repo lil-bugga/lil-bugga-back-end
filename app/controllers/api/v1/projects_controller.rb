@@ -9,7 +9,7 @@ class Api::V1::ProjectsController < ApplicationController
   # Returns all projects for which the user is associated
   def index
     @projects = Project.all_for_user(current_user.id)
-    render @projects.to_json(include: :project_detail), status: 200
+    render json: @projects.to_json(include: :project_detail), status: 200
   end
 
   # GET /projects/:id
@@ -114,8 +114,8 @@ class Api::V1::ProjectsController < ApplicationController
       end
       if errors.empty?
         ProjectUser.destroy(success)
-        # success.each.destroy
-        # render json: @project.project_users, status: :created
+        success.each.destroy
+        render json: @project.project_users, status: :created
       else
         render json: { errors: errors }, status: :unprocessable_entity
       end
