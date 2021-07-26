@@ -1,7 +1,7 @@
 class Ticket < ApplicationRecord
   belongs_to :project
   belongs_to :user
-  has_many :entries, dependent: :destroy
+  has_many :entries, -> {order "id asc"}, dependent: :destroy
 
   # Allows integer to represent ticket status with :open?, :todo?, :in_progress?, :complete, and :closed? method checks
   # Add more to array as more status' are required. NB: order matters, append only unless db will be dropped
@@ -14,7 +14,7 @@ class Ticket < ApplicationRecord
   def self.build_ticket_object_array(data)
     data.as_json.map do |item|
       item[:project_detail] = ProjectDetail.find_by_id(item['project_id'])
-      item[:first_entry] = Entry.find_by_ticket_id(item['id'])
+      item[:first_entry] = Entry.where(ticket_id: item['id']).first
       item
     end
   end

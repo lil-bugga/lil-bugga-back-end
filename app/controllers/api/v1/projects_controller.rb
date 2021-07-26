@@ -109,13 +109,14 @@ class Api::V1::ProjectsController < ApplicationController
           errors << { error: 'User does not exist' }
         else
           project_user = ProjectUser.find_user_in_project(extract_user, @project)
-          project_user.exists? ? success << project_user.ids : errors << { error: 'User does not have an assigned role in the project' }
+          project_user.exists? ? success << project_user[0] : errors << { error: 'User does not have an assigned role in the project' }
         end
       end
       if errors.empty?
-        ProjectUser.destroy(success)
-        success.each.destroy
-        render json: @project.project_users, status: :created
+        success.each do |user| 
+          user.destroy
+        end
+        render json: @project.project_users, status: 204
       else
         render json: { errors: errors }, status: :unprocessable_entity
       end
