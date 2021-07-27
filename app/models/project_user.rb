@@ -21,9 +21,26 @@ class ProjectUser < ApplicationRecord
 
   # Verify user has required permissions on project.
   # Takes a user obj or id, the project_obj or id, and the enum role (string or int)
-  def self.verify_role(user_id, project, role)
+  def self.verify_role(user_id, project, ver_role)
     user_arr = find_user_in_project(user_id, project)
-    user_arr.each { |user| return true if user.role >= role }
+    user_arr.each { |user| return true if find_role(user.role) >= find_role(ver_role) }
     false
+  end
+
+  # Compare enum strings to implicitly return integer valuesf.password_field
+  # Return -1 by default because only passed string is likely to be false, and -1 will deny access.
+  def self.find_role(user_role)
+    case user_role
+    when 'client'
+      0
+    when 'developer'
+      1
+    when 'admin'
+      2
+    when 'owner'
+      3
+    else
+      -1
+    end
   end
 end

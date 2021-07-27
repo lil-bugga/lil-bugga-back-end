@@ -1,7 +1,7 @@
 class Ticket < ApplicationRecord
   belongs_to :project
   belongs_to :user
-  has_many :entries, -> {order "id asc"}, dependent: :destroy
+  has_many :entries, dependent: :destroy
 
   # Allows integer to represent ticket status with :open?, :todo?, :in_progress?, :complete, and :closed? method checks
   # Add more to array as more status' are required. NB: order matters, append only unless db will be dropped
@@ -23,7 +23,7 @@ class Ticket < ApplicationRecord
   def self.build_ticket_object(ticket, user_id)
     response = ticket.as_json
     response[:current_role] = ProjectUser.find_user_in_project(user_id, ticket.project_id)
-    response[:entries] = Entry.where(ticket_id: ticket['id'])
+    response[:entries] = Entry.where(ticket_id: ticket['id']).sort_by{|e| e.id}
     response
   end
 
