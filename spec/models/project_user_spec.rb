@@ -87,8 +87,7 @@ RSpec.describe ProjectUser, type: :model do
       describe 'find_user_in_project' do
         it 'should a projectuser object' do
           lookup = ProjectUser.find_user_in_project(@project_owner, @project)
-          p lookup
-          expect(lookup).to be_an_instance_of(ProjectUser)
+          expect(lookup[0]).to be_an_instance_of(ProjectUser)
         end
       end
 
